@@ -1,12 +1,18 @@
 <?php
 
+require_once 'CartItemInterface.php';
+require_once 'CartItem.php';
+require_once 'ShippingStrategyInterface.php';
+require_once 'FreeShippingStrategy.php';
+require_once 'FlatRateShippingStrategy.php';
 require_once 'Cart.php';
 
-$cart = new Cart();
+$shippingStrategy = new FreeShippingStrategy(200); 
+$cart = new Cart($shippingStrategy);
 
-$cart->addItem(['product_id' => 1, 'qty' => 1, 'price' => 5]);
-$cart->addItem(['product_id' => 5, 'qty' => 3, 'price' => 10]);
-$cart->addItem(['product_id' => 1, 'qty' => 2, 'price' => 5]);
+$cart->addItem(new CartItem(1, 1, 5));
+$cart->addItem(new CartItem(5, 3, 10));
+$cart->addItem(new CartItem(1, 2, 5));
 
 echo 'Shipping cost: ' . $cart->getShippingCost() . "\n";
-echo 'Cart total: ' . $cart->getTotalValue() . "\n";
+echo 'Cart total: ' . $cart->getTotalWithShipping() . "\n";
