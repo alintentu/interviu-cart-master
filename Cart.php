@@ -3,20 +3,26 @@
 class Cart {
     private $items = [];
     private $shippingStrategy;
+    private $discountManager;
 
-    public function __construct(ShippingStrategyInterface $shippingStrategy) {
+    public function __construct(ShippingStrategyInterface $shippingStrategy, DiscountManager $discountManager) {
         $this->shippingStrategy = $shippingStrategy;
+        $this->discountManager = $discountManager;
     }
 
     public function addItem(CartItemInterface $item): void {
         $productId = $item->getId();
 
         if (isset($this->items[$productId])) {
-            // Produsul exista deja, actualizam cantitatea
             $this->items[$productId]->increaseQuantity($item->getQuantity());
         } else {
-            // Adaugam produsul nou
             $this->items[$productId] = $item;
+        }
+    }
+
+    public function removeItem(int $productId): void {
+        if (isset($this->items[$productId])) {
+            unset($this->items[$productId]);
         }
     }
 
@@ -32,11 +38,14 @@ class Cart {
         return $this->shippingStrategy->calculateShippingCost($this->getTotalWithoutShipping());
     }
 
-    public function getTotalWithShipping(): float {
-        return $this->getTotalWithoutShipping() + $this->getShippingCost();
+    public function getTotalWithShippingAndDiscounts(): float {
+        $total = $this->getTotalWithoutShipping();
+        $totalWithDiscounts = $this->discountManager->applyDiscounts($total);
+        return $totalWithDiscounts + $this->getShippingCost();
     }
 
-    public function getItems(): array {
-        return $this->items;
+    public function recalculateTotalAfterRemoval(int $productId): float {
+        $this->removeItem($productId);
+        return $this->getTotalWithShippingAndDiscounts();
     }
 }

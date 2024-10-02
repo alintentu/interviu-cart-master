@@ -2,12 +2,14 @@
 
 class FreeShippingStrategy implements ShippingStrategyInterface {
     private $threshold;
+    private $shippingCost;
 
-    public function __construct(float $threshold = 200) {
+    public function __construct(float $threshold, float $shippingCost) {
         $this->threshold = $threshold;
+        $this->shippingCost = $shippingCost;
     }
 
-    public function calculateShippingCost(float $totalValue): float {
-        return $totalValue >= $this->threshold ? 0 : 15;
+    public function calculateShippingCost(float $total): float {
+        return $total >= $this->threshold ? 0 : $this->shippingCost;
     }
 }

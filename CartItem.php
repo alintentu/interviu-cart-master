@@ -23,11 +23,11 @@ class CartItem implements CartItemInterface {
         return $this->price;
     }
 
-    public function increaseQuantity(int $quantity): void {
-        $this->quantity += $quantity;
-    }
-
     public function getTotalPrice(): float {
         return $this->price * $this->quantity;
+    }
+
+    public function increaseQuantity(int $quantity): void {
+        $this->quantity += $quantity;
     }
 }

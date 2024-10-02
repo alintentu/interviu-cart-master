@@ -1,5 +1,5 @@
 <?php
 
 interface ShippingStrategyInterface {
-    public function calculateShippingCost(float $totalValue): float;
+    public function calculateShippingCost(float $total): float;
 }
